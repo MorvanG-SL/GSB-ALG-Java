@@ -3,21 +3,24 @@ package Interface;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
+
+import Controleur.utilisateur;
 
 public class consultFicheView extends JFrame {
 
@@ -25,7 +28,17 @@ public class consultFicheView extends JFrame {
 	private JPanel contentPane;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JTable tableVisiteurs;
-	private JComboBox<String> comboRegion;
+
+	private JRadioButton rdbtnParRegion;
+	private JRadioButton rdbtnParNomPrenom;
+	private JRadioButton rdbtnParIdentifiant;
+
+	// 2 champs réutilisables (aucune superposition dans WindowBuilder)
+	private JLabel lblCritere1;
+	private JTextField txtCritere1;
+	private JLabel lblCritere2;
+	private JTextField txtCritere2;
+
 	private JLabel lblValNom;
 	private JLabel lblValPrenom;
 	private JLabel lblValRegion;
@@ -33,9 +46,8 @@ public class consultFicheView extends JFrame {
 	private JLabel lblValTelephone;
 	private JLabel lblValMail;
 
-	/**
-	 * Launch the application.
-	 */
+	private ArrayList<utilisateur> lesVisiteurs = new ArrayList<utilisateur>();
+
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -49,9 +61,6 @@ public class consultFicheView extends JFrame {
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 */
 	public consultFicheView() {
 		setTitle("GSB - Consulter une fiche visiteur");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -85,8 +94,8 @@ public class consultFicheView extends JFrame {
 		contentPane.add(panelMain);
 		panelMain.setLayout(null);
 
-		// Boutons radio de filtre
-		JRadioButton rdbtnParRegion = new JRadioButton("Par région");
+		// Boutons radio
+		rdbtnParRegion = new JRadioButton("Par région");
 		rdbtnParRegion.setSelected(true);
 		rdbtnParRegion.setBackground(Color.WHITE);
 		rdbtnParRegion.setFont(new Font("SansSerif", Font.PLAIN, 12));
@@ -94,39 +103,52 @@ public class consultFicheView extends JFrame {
 		rdbtnParRegion.setBounds(15, 12, 110, 23);
 		panelMain.add(rdbtnParRegion);
 
-		JRadioButton rdbtnParNomPrenom = new JRadioButton("Par nom et prénom");
+		rdbtnParNomPrenom = new JRadioButton("Par nom et prénom");
 		rdbtnParNomPrenom.setBackground(Color.WHITE);
 		rdbtnParNomPrenom.setFont(new Font("SansSerif", Font.PLAIN, 12));
 		buttonGroup.add(rdbtnParNomPrenom);
 		rdbtnParNomPrenom.setBounds(160, 12, 150, 23);
 		panelMain.add(rdbtnParNomPrenom);
 
-		JRadioButton rdbtnParIdentifiant = new JRadioButton("Par identifiant");
+		rdbtnParIdentifiant = new JRadioButton("Par identifiant");
 		rdbtnParIdentifiant.setBackground(Color.WHITE);
 		rdbtnParIdentifiant.setFont(new Font("SansSerif", Font.PLAIN, 12));
 		buttonGroup.add(rdbtnParIdentifiant);
 		rdbtnParIdentifiant.setBounds(350, 12, 130, 23);
 		panelMain.add(rdbtnParIdentifiant);
 
-		// Critère de recherche (Région + bouton Rechercher)
-		JLabel lblRegion = new JLabel("Région");
-		lblRegion.setForeground(new Color(80, 90, 100));
-		lblRegion.setFont(new Font("SansSerif", Font.PLAIN, 11));
-		lblRegion.setBounds(15, 42, 100, 16);
-		panelMain.add(lblRegion);
+		// Champ principal (Région / Nom / Identifiant)
+		lblCritere1 = new JLabel("Région");
+		lblCritere1.setForeground(new Color(80, 90, 100));
+		lblCritere1.setFont(new Font("SansSerif", Font.PLAIN, 11));
+		lblCritere1.setBounds(15, 42, 100, 16);
+		panelMain.add(lblCritere1);
 
-		comboRegion = new JComboBox<String>();
-		comboRegion.setBackground(Color.WHITE);
-		comboRegion.setFont(new Font("SansSerif", Font.PLAIN, 12));
-		comboRegion.setModel(new DefaultComboBoxModel<String>(new String[] {
-			"Bretagne", "Normandie", "Île-de-France", "Auvergne-Rhône-Alpes", "Occitanie"
-		}));
-		comboRegion.setBounds(15, 60, 235, 30);
-		panelMain.add(comboRegion);
+		txtCritere1 = new JTextField();
+		txtCritere1.setFont(new Font("SansSerif", Font.PLAIN, 12));
+		txtCritere1.setBounds(15, 60, 235, 30);
+		panelMain.add(txtCritere1);
 
+		// Second champ (uniquement utilisé pour Prénom en mode Nom + Prénom)
+		lblCritere2 = new JLabel("Prénom");
+		lblCritere2.setForeground(new Color(80, 90, 100));
+		lblCritere2.setFont(new Font("SansSerif", Font.PLAIN, 11));
+		lblCritere2.setBounds(138, 42, 100, 16);
+		lblCritere2.setVisible(false);
+		panelMain.add(lblCritere2);
+
+		txtCritere2 = new JTextField();
+		txtCritere2.setFont(new Font("SansSerif", Font.PLAIN, 12));
+		txtCritere2.setBounds(138, 60, 112, 30);
+		txtCritere2.setVisible(false);
+		panelMain.add(txtCritere2);
+
+		// Bouton Rechercher
 		JButton btnRechercher = new JButton("Rechercher");
 		btnRechercher.setForeground(Color.WHITE);
 		btnRechercher.setBackground(new Color(29, 91, 158));
+		btnRechercher.setOpaque(true);
+		btnRechercher.setBorderPainted(false);
 		btnRechercher.setFont(new Font("SansSerif", Font.BOLD, 12));
 		btnRechercher.setFocusPainted(false);
 		btnRechercher.setBounds(265, 60, 135, 30);
@@ -146,14 +168,8 @@ public class consultFicheView extends JFrame {
 		tableVisiteurs.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 12));
 		tableVisiteurs.getTableHeader().setBackground(new Color(217, 225, 232));
 		tableVisiteurs.setModel(new DefaultTableModel(
-			new Object[][] {
-				{"V001", "Lemoine", "Camille"},
-				{"V002", "Garnier", "Hugo"},
-				{"V003", "Roussel", "Inès"},
-			},
-			new String[] {
-				"Identifiant", "Nom", "Prénom"
-			}
+			new Object[][] {},
+			new String[] { "Identifiant", "Nom", "Prénom" }
 		) {
 			private static final long serialVersionUID = 1L;
 			@Override
@@ -161,7 +177,6 @@ public class consultFicheView extends JFrame {
 				return false;
 			}
 		});
-		tableVisiteurs.setRowSelectionInterval(0, 0);
 		scrollPane.setViewportView(tableVisiteurs);
 
 		// Encadré "Fiche visiteur"
@@ -178,14 +193,13 @@ public class consultFicheView extends JFrame {
 		lblFicheTitre.setBounds(14, 10, 150, 16);
 		panelFiche.add(lblFicheTitre);
 
-		// Ligne 1 : Nom / Prénom / Région
 		JLabel lblTitreNom = new JLabel("Nom");
 		lblTitreNom.setForeground(new Color(100, 110, 120));
 		lblTitreNom.setFont(new Font("SansSerif", Font.PLAIN, 11));
 		lblTitreNom.setBounds(14, 34, 100, 14);
 		panelFiche.add(lblTitreNom);
 
-		lblValNom = new JLabel("Lemoine");
+		lblValNom = new JLabel("-");
 		lblValNom.setFont(new Font("SansSerif", Font.PLAIN, 12));
 		lblValNom.setBounds(14, 50, 160, 16);
 		panelFiche.add(lblValNom);
@@ -196,7 +210,7 @@ public class consultFicheView extends JFrame {
 		lblTitrePrenom.setBounds(200, 34, 100, 14);
 		panelFiche.add(lblTitrePrenom);
 
-		lblValPrenom = new JLabel("Camille");
+		lblValPrenom = new JLabel("-");
 		lblValPrenom.setFont(new Font("SansSerif", Font.PLAIN, 12));
 		lblValPrenom.setBounds(200, 50, 160, 16);
 		panelFiche.add(lblValPrenom);
@@ -207,19 +221,18 @@ public class consultFicheView extends JFrame {
 		lblTitreRegion.setBounds(390, 34, 100, 14);
 		panelFiche.add(lblTitreRegion);
 
-		lblValRegion = new JLabel("Bretagne");
+		lblValRegion = new JLabel("-");
 		lblValRegion.setFont(new Font("SansSerif", Font.PLAIN, 12));
 		lblValRegion.setBounds(390, 50, 170, 16);
 		panelFiche.add(lblValRegion);
 
-		// Ligne 2 : Adresse / Téléphone / Mail
 		JLabel lblTitreAdresse = new JLabel("Adresse");
 		lblTitreAdresse.setForeground(new Color(100, 110, 120));
 		lblTitreAdresse.setFont(new Font("SansSerif", Font.PLAIN, 11));
 		lblTitreAdresse.setBounds(14, 76, 100, 14);
 		panelFiche.add(lblTitreAdresse);
 
-		lblValAdresse = new JLabel("12 rue des Lilas, Brest");
+		lblValAdresse = new JLabel("-");
 		lblValAdresse.setFont(new Font("SansSerif", Font.PLAIN, 12));
 		lblValAdresse.setBounds(14, 92, 175, 16);
 		panelFiche.add(lblValAdresse);
@@ -230,7 +243,7 @@ public class consultFicheView extends JFrame {
 		lblTitreTelephone.setBounds(200, 76, 100, 14);
 		panelFiche.add(lblTitreTelephone);
 
-		lblValTelephone = new JLabel("02 98 00 01 01");
+		lblValTelephone = new JLabel("-");
 		lblValTelephone.setFont(new Font("SansSerif", Font.PLAIN, 12));
 		lblValTelephone.setBounds(200, 92, 160, 16);
 		panelFiche.add(lblValTelephone);
@@ -241,7 +254,7 @@ public class consultFicheView extends JFrame {
 		lblTitreMail.setBounds(390, 76, 100, 14);
 		panelFiche.add(lblTitreMail);
 
-		lblValMail = new JLabel("lemoine.camille@gsb.fr");
+		lblValMail = new JLabel("-");
 		lblValMail.setFont(new Font("SansSerif", Font.PLAIN, 12));
 		lblValMail.setBounds(390, 92, 180, 16);
 		panelFiche.add(lblValMail);
@@ -257,6 +270,8 @@ public class consultFicheView extends JFrame {
 		JButton btnConsulter = new JButton("Consulter");
 		btnConsulter.setForeground(Color.WHITE);
 		btnConsulter.setBackground(new Color(29, 91, 158));
+		btnConsulter.setOpaque(true);
+		btnConsulter.setBorderPainted(false);
 		btnConsulter.setFont(new Font("SansSerif", Font.BOLD, 12));
 		btnConsulter.setFocusPainted(false);
 		btnConsulter.setBounds(14, 10, 138, 32);
@@ -269,7 +284,6 @@ public class consultFicheView extends JFrame {
 		btnNouveau.setFocusPainted(false);
 		btnNouveau.setBounds(163, 10, 138, 32);
 		panelFooter.add(btnNouveau);
-		btnNouveau.setEnabled(false);
 
 		JButton btnModifier = new JButton("Modifier");
 		btnModifier.setForeground(new Color(30, 40, 50));
@@ -286,6 +300,122 @@ public class consultFicheView extends JFrame {
 		btnSupprimer.setFocusPainted(false);
 		btnSupprimer.setBounds(461, 10, 138, 32);
 		panelFooter.add(btnSupprimer);
+
+		// =========================================================================
+		// ÉVÉNEMENTS ET DROITS D'ACCÈS
+		// =========================================================================
+
+		if (utilisateur.roleConnecte != null
+				&& !utilisateur.roleConnecte.equalsIgnoreCase("secrétaire")
+				&& !utilisateur.roleConnecte.equalsIgnoreCase("secretaire")) {
+			btnNouveau.setVisible(false);
+			btnModifier.setVisible(false);
+			btnSupprimer.setVisible(false);
+		}
+
+		rdbtnParRegion.addActionListener(e -> basculerModeRecherche("REGION"));
+		rdbtnParNomPrenom.addActionListener(e -> basculerModeRecherche("NOM"));
+		rdbtnParIdentifiant.addActionListener(e -> basculerModeRecherche("ID"));
+
+		btnRechercher.addActionListener(e -> lancerRecherche());
+
+		tableVisiteurs.getSelectionModel().addListSelectionListener(e -> {
+			if (!e.getValueIsAdjusting()) {
+				int row = tableVisiteurs.getSelectedRow();
+				if (row >= 0 && row < lesVisiteurs.size()) {
+					afficherDetailsVisiteur(lesVisiteurs.get(row));
+				}
+			}
+		});
 	}
-	
+
+	private void basculerModeRecherche(String mode) {
+		txtCritere1.setText("");
+		txtCritere2.setText("");
+
+		if (mode.equals("REGION")) {
+			lblCritere1.setText("Région");
+			txtCritere1.setBounds(15, 60, 235, 30);
+			lblCritere2.setVisible(false);
+			txtCritere2.setVisible(false);
+		} else if (mode.equals("NOM")) {
+			lblCritere1.setText("Nom");
+			txtCritere1.setBounds(15, 60, 112, 30);
+			lblCritere2.setVisible(true);
+			txtCritere2.setVisible(true);
+		} else if (mode.equals("ID")) {
+			lblCritere1.setText("Identifiant");
+			txtCritere1.setBounds(15, 60, 235, 30);
+			lblCritere2.setVisible(false);
+			txtCritere2.setVisible(false);
+		}
+	}
+
+	private void lancerRecherche() {
+		lesVisiteurs.clear();
+
+		if (rdbtnParRegion.isSelected()) {
+			String regionSaisie = txtCritere1.getText().trim();
+			if (regionSaisie.isEmpty()) {
+				JOptionPane.showMessageDialog(this, "Veuillez saisir une région.");
+				return;
+			}
+			lesVisiteurs = utilisateur.rechercherParRegion(regionSaisie);
+
+		} else if (rdbtnParNomPrenom.isSelected()) {
+			String nom = txtCritere1.getText().trim();
+			String prenom = txtCritere2.getText().trim();
+			if (nom.isEmpty() && prenom.isEmpty()) {
+				JOptionPane.showMessageDialog(this, "Veuillez saisir un nom ou un prénom.");
+				return;
+			}
+			lesVisiteurs = utilisateur.rechercherParNomPrenom(nom, prenom);
+
+		} else if (rdbtnParIdentifiant.isSelected()) {
+			String id = txtCritere1.getText().trim();
+			if (id.isEmpty()) {
+				JOptionPane.showMessageDialog(this, "Veuillez saisir un identifiant.");
+				return;
+			}
+			utilisateur u = utilisateur.rechercherParId(id);
+			if (u != null) {
+				lesVisiteurs.add(u);
+			}
+		}
+
+		DefaultTableModel model = (DefaultTableModel) tableVisiteurs.getModel();
+		model.setRowCount(0);
+
+		for (utilisateur u : lesVisiteurs) {
+			model.addRow(new Object[] { u.getIdUtilisateur(), u.getNom(), u.getPrenom() });
+		}
+
+		if (lesVisiteurs.isEmpty()) {
+			viderFicheVisiteur();
+			JOptionPane.showMessageDialog(this, "Aucun visiteur trouvé.");
+		} else {
+			tableVisiteurs.setRowSelectionInterval(0, 0);
+			afficherDetailsVisiteur(lesVisiteurs.get(0));
+		}
+	}
+
+	private void afficherDetailsVisiteur(utilisateur u) {
+		lblValNom.setText(u.getNom());
+		lblValPrenom.setText(u.getPrenom());
+		lblValRegion.setText(utilisateur.getLibelleRegion(u.getIdRegion()));
+		lblValAdresse.setText(u.getAdresse() + ", " + u.getVille());
+
+		int numTel = (u.getTelPortable() != 0) ? u.getTelPortable() : u.getTelFixe();
+		lblValTelephone.setText(numTel != 0 ? String.format("%010d", numTel) : "-");
+		lblValMail.setText(u.getMailPro() != null ? u.getMailPro() : "-");
+	}
+
+	private void viderFicheVisiteur() {
+		lblValNom.setText("-");
+		lblValPrenom.setText("-");
+		lblValRegion.setText("-");
+		lblValAdresse.setText("-");
+		lblValTelephone.setText("-");
+		lblValMail.setText("-");
+	}
 }

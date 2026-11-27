@@ -3,6 +3,8 @@ package Interface;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -194,7 +196,10 @@ public class ajoutVisiteurView extends JFrame {
 		btnConsulter.setFocusPainted(false);
 		btnConsulter.setBounds(14, 10, 138, 32);
 		panelFooter.add(btnConsulter);
-
+		btnConsulter.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}});
 		JButton btnNouveau = new JButton("Nouveau visiteur");
 		btnNouveau.setForeground(Color.WHITE);
 		btnNouveau.setBackground(new Color(29, 91, 158));

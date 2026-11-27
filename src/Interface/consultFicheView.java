@@ -21,6 +21,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
 import Controleur.utilisateur;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class consultFicheView extends JFrame {
 
@@ -268,6 +270,11 @@ public class consultFicheView extends JFrame {
 		panelFooter.setLayout(null);
 
 		JButton btnConsulter = new JButton("Consulter");
+		btnConsulter.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
 		btnConsulter.setForeground(Color.WHITE);
 		btnConsulter.setBackground(new Color(29, 91, 158));
 		btnConsulter.setOpaque(true);
@@ -278,6 +285,11 @@ public class consultFicheView extends JFrame {
 		panelFooter.add(btnConsulter);
 
 		JButton btnNouveau = new JButton("Nouveau visiteur");
+		btnNouveau.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ajoutVisiteurView.main(null);
+			}
+		});
 		btnNouveau.setForeground(new Color(30, 40, 50));
 		btnNouveau.setBackground(new Color(245, 247, 249));
 		btnNouveau.setFont(new Font("SansSerif", Font.BOLD, 12));

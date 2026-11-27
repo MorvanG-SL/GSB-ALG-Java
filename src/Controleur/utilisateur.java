@@ -157,9 +157,9 @@ public class utilisateur {
 			requete.setString(1, login);
 			requete.setString(2, mdp);
 			ResultSet resultat = requete.executeQuery();
-
+			
 			if (resultat.next()) {
-				roleConnecte = resultat.getString("libelle");
+				roleConnecte = resultat.getString("idrole");
 				return roleConnecte;
 			}
 		} catch (SQLException e) {

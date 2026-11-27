@@ -141,9 +141,23 @@ public class loginView {
 				
 				// récupération de l'utilisateur dans la base
 				String role = utilisateur.verifConnexion(login, mdp);
+				System.out.println(role);
 				if (role != null) {
-					consultFicheView.main(null);
-					frame.dispose();
+					switch (role.trim()) {
+						case "VISI":
+							consultFicheView.main(null);
+							frame.dispose();
+							break;
+							
+						case "COMP":
+							statsParVisiteurView.main(null);
+							frame.dispose();
+							break;
+							
+						default:
+							JOptionPane.showMessageDialog(frame, "Rôle non reconnu : " + role);
+							break;
+					}
 				} else {
 					JOptionPane.showMessageDialog(frame, "Authentification erronée");
 				}

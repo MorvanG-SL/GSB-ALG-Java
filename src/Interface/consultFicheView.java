@@ -286,5 +286,4 @@ public class consultFicheView extends JFrame {
 		btnSupprimer.setBounds(461, 10, 138, 32);
 		panelFooter.add(btnSupprimer);
 	}
-	
 }

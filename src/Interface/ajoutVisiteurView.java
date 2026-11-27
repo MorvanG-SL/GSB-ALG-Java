@@ -199,7 +199,10 @@ public class ajoutVisiteurView extends JFrame {
 		btnConsulter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				consultFicheView.main(null);
-			}});
+				dispose();
+			}
+		});
+		
 		JButton btnNouveau = new JButton("Nouveau visiteur");
 		btnNouveau.setForeground(Color.WHITE);
 		btnNouveau.setBackground(new Color(29, 91, 158));
@@ -215,6 +218,12 @@ public class ajoutVisiteurView extends JFrame {
 		btnModifier.setFocusPainted(false);
 		btnModifier.setBounds(312, 10, 138, 32);
 		panelFooter.add(btnModifier);
+		btnModifier.addActionListener(new ActionListener() { // <-- C'était écrit btnConsulter ici
+			public void actionPerformed(ActionEvent e) {
+				modifVisiteurView.main(null);
+				dispose();
+			}
+		});
 
 		JButton btnSupprimer = new JButton("Supprimer");
 		btnSupprimer.setForeground(new Color(30, 40, 50));
@@ -223,5 +232,11 @@ public class ajoutVisiteurView extends JFrame {
 		btnSupprimer.setFocusPainted(false);
 		btnSupprimer.setBounds(461, 10, 138, 32);
 		panelFooter.add(btnSupprimer);
+		btnSupprimer.addActionListener(new ActionListener() { // <-- Et ici aussi
+			public void actionPerformed(ActionEvent e) {
+				supprVisiteurView.main(null);
+				dispose();
+			}
+		});
 	}
 }

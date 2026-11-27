@@ -1,4 +1,6 @@
 
+package Controleur;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -108,4 +110,3 @@ public class FichierTexte {
 		return ligne;
 	}
 }
-	

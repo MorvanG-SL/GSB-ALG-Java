@@ -1,3 +1,8 @@
+package Controleur;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 
 public class utilisateur {
@@ -92,6 +97,24 @@ public class utilisateur {
 				+ login + ", mdp=" + mdp + ", adresse=" + adresse + ", cp=" + cp + ", ville=" + ville
 				+ ", dateEmbauche=" + dateEmbauche + ", idRole=" + idRole + "]";
 	}
-	
-	
+	public static String roleConnecte = null;
+	public static String verifConnexion(String login, String mdp)
+	{
+		try {
+			Connection con = AccesBd.getInstance();
+			String query = "SELECT login, mdp, utilisateur.idrole, role.libelle FROM utilisateur INNER JOIN role ON utilisateur.idrole = role.idrole WHERE utilisateur.login = ? AND utilisateur.mdp = ?;";
+			PreparedStatement requete = con.prepareStatement(query);
+            requete.setString(1, login);
+            requete.setString(2, mdp);
+            ResultSet resultat = requete.executeQuery();
+            
+            if (resultat.next()) {
+                roleConnecte = resultat.getString("libelle"); // On le sauvegarde ici !
+                return roleConnecte;
+            }
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

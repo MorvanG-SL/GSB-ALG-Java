@@ -1,13 +1,13 @@
+package Controleur;
 import java.util.HashMap;
 public class Parametre {
- 	private static String nomFichier = "paramAppli.ini";
+	private static String nomFichier = "src/paramAppli.ini";
   	private static HashMap<String, String> listeChemin = null;
  	public static String getUrl(){  
  		lectureFichier();
  		String valeur = listeChemin.get("urlBD");
  		return valeur;
  	}
- 	//public static String getCheminUsagerXML()  {}
  	
   	// chargement fichier texte dans un dictionnaire
   	// on le fera une seule fois

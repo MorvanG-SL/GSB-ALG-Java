@@ -12,17 +12,16 @@ import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
-public class loginView extends JFrame {
+import Controleur.utilisateur;
 
-	private static final long serialVersionUID = 1L;
-	private JPanel contentPane;
+public class loginView {
+
+	private JFrame frame;
 	private JTextField txtUsername;
 	private JPasswordField txtPassword;
 
@@ -33,8 +32,8 @@ public class loginView extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					loginView frame = new loginView();
-					frame.setVisible(true);
+					loginView window = new loginView();
+					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -43,20 +42,24 @@ public class loginView extends JFrame {
 	}
 
 	/**
-	 * Create the frame.
+	 * Create the application.
 	 */
 	public loginView() {
-		setTitle("Connexion");
-		setResizable(false);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 420, 360);
-		setLocationRelativeTo(null); // Centre la fenêtre sur l'écran
+		initialize();
+	}
 
-		contentPane = new JPanel();
-		contentPane.setBackground(new Color(245, 247, 250));
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {
+		frame = new JFrame();
+		frame.setTitle("Connexion");
+		frame.setResizable(false);
+		frame.setBounds(100, 100, 420, 360);
+		frame.setLocationRelativeTo(null); // Centre la fenêtre sur l'écran
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setBackground(new Color(245, 247, 250));
+		frame.getContentPane().setLayout(null);
 
 		// Titre principal
 		JLabel lblTitle = new JLabel("Bienvenue");
@@ -64,27 +67,27 @@ public class loginView extends JFrame {
 		lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 24));
 		lblTitle.setForeground(new Color(33, 37, 41));
 		lblTitle.setBounds(50, 25, 300, 35);
-		contentPane.add(lblTitle);
+		frame.getContentPane().add(lblTitle);
 
 		JLabel lblSubtitle = new JLabel("Connectez-vous à votre compte");
 		lblSubtitle.setHorizontalAlignment(SwingConstants.CENTER);
 		lblSubtitle.setFont(new Font("Segoe UI", Font.PLAIN, 13));
 		lblSubtitle.setForeground(new Color(108, 117, 125));
 		lblSubtitle.setBounds(50, 60, 300, 20);
-		contentPane.add(lblSubtitle);
+		frame.getContentPane().add(lblSubtitle);
 
-		// Champ Identifiant / Email
+		// Champ Identifiant
 		JLabel lblUser = new JLabel("Nom d'utilisateur");
 		lblUser.setFont(new Font("Segoe UI", Font.BOLD, 12));
 		lblUser.setForeground(new Color(52, 58, 64));
 		lblUser.setBounds(50, 95, 300, 20);
-		contentPane.add(lblUser);
+		frame.getContentPane().add(lblUser);
 
 		txtUsername = new JTextField();
 		txtUsername.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 		txtUsername.setBorder(new LineBorder(new Color(206, 212, 218), 1, true));
 		txtUsername.setBounds(50, 118, 300, 35);
-		contentPane.add(txtUsername);
+		frame.getContentPane().add(txtUsername);
 		txtUsername.setColumns(10);
 
 		// Champ Mot de passe
@@ -92,13 +95,13 @@ public class loginView extends JFrame {
 		lblPass.setFont(new Font("Segoe UI", Font.BOLD, 12));
 		lblPass.setForeground(new Color(52, 58, 64));
 		lblPass.setBounds(50, 165, 300, 20);
-		contentPane.add(lblPass);
+		frame.getContentPane().add(lblPass);
 
 		txtPassword = new JPasswordField();
 		txtPassword.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 		txtPassword.setBorder(new LineBorder(new Color(206, 212, 218), 1, true));
 		txtPassword.setBounds(50, 188, 300, 35);
-		contentPane.add(txtPassword);
+		frame.getContentPane().add(txtPassword);
 
 		// Case à cocher pour afficher le mot de passe
 		JCheckBox chkShowPassword = new JCheckBox("Afficher le mot de passe");
@@ -115,7 +118,7 @@ public class loginView extends JFrame {
 				}
 			}
 		});
-		contentPane.add(chkShowPassword);
+		frame.getContentPane().add(chkShowPassword);
 
 		// Bouton Se connecter
 		JButton btnLogin = new JButton("Se connecter");
@@ -128,45 +131,24 @@ public class loginView extends JFrame {
 		btnLogin.setBounds(50, 268, 300, 38);
 		
 		// Permet de valider avec la touche Entrée
-		getRootPane().setDefaultButton(btnLogin);
+		frame.getRootPane().setDefaultButton(btnLogin);
 
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				authentifier();
+				// récupération des données saisies
+				String login = txtUsername.getText();
+				String mdp = String.copyValueOf(txtPassword.getPassword()); // Si mdp chiffré - à voir plus tard
+				
+				// récupération de l'utilisateur dans la base
+				String role = utilisateur.verifConnexion(login, mdp);
+				if (role != null) {
+					consultFicheView.main(null);
+					frame.dispose();
+				} else {
+					JOptionPane.showMessageDialog(frame, "Authentification erronée");
+				}
 			}
 		});
-		contentPane.add(btnLogin);
-	}
-
-	/**
-	 * Méthode de vérification des identifiants
-	 */
-	private void authentifier() {
-		String user = txtUsername.getText().trim();
-		String pass = new String(txtPassword.getPassword());
-
-		if (user.isEmpty() || pass.isEmpty()) {
-			JOptionPane.showMessageDialog(this, 
-				"Veuillez remplir tous les champs.", 
-				"Champs manquants", 
-				JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-
-		// Exemple de vérification (à remplacer par ta requête SQL / DAO)
-		if (user.equals("admin") && pass.equals("1234")) {
-			JOptionPane.showMessageDialog(this, 
-				"Connexion réussie !", 
-				"Succès", 
-				JOptionPane.INFORMATION_MESSAGE);
-			// Exemple pour ouvrir la fenêtre suivante :
-			// new DashboardView().setVisible(true);
-			// this.dispose();
-		} else {
-			JOptionPane.showMessageDialog(this, 
-				"Identifiant ou mot de passe incorrect.", 
-				"Erreur de connexion", 
-				JOptionPane.ERROR_MESSAGE);
-		}
+		frame.getContentPane().add(btnLogin);
 	}
 }

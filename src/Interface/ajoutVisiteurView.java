@@ -198,7 +198,7 @@ public class ajoutVisiteurView extends JFrame {
 		panelFooter.add(btnConsulter);
 		btnConsulter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				consultFicheView.main(null);
 			}});
 		JButton btnNouveau = new JButton("Nouveau visiteur");
 		btnNouveau.setForeground(Color.WHITE);

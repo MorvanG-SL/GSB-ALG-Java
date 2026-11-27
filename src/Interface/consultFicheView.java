@@ -272,7 +272,7 @@ public class consultFicheView extends JFrame {
 		JButton btnConsulter = new JButton("Consulter");
 		btnConsulter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				 
 			}
 		});
 		btnConsulter.setForeground(Color.WHITE);

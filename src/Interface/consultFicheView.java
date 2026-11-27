@@ -269,6 +269,7 @@ public class consultFicheView extends JFrame {
 		btnNouveau.setFocusPainted(false);
 		btnNouveau.setBounds(163, 10, 138, 32);
 		panelFooter.add(btnNouveau);
+		btnNouveau.setEnabled(false);
 
 		JButton btnModifier = new JButton("Modifier");
 		btnModifier.setForeground(new Color(30, 40, 50));
